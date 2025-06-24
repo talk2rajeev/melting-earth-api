@@ -79,6 +79,7 @@ app.get('/countries', (req, res) => {
 app.get('/data', (req, res) => {
   console.log('req.params ', req.query.test);
   const country = req.query.country || 'India';
+  console.log('countries', country);
   const results = [];
   // Use path.join and __dirname to get the correct absolute path
   const csvFilePath = path.join(__dirname, 'Annual_Surface_Temperature_Change.csv');
@@ -91,9 +92,10 @@ app.get('/data', (req, res) => {
     })
     .on('end', () => {
       // Add a check to ensure results[1] exists
+      const countryList = country.split('|');
       if (results.length > 1) {
-        const countryResult = results.find(c => c.Country === country);
-        const data = countryResult || results[0];
+        const countryResult = results.filter(c => countryList.includes(c.Country));
+        const data = countryResult || results;
         res.json(data);
 
       } else {
